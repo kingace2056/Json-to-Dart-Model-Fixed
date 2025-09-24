@@ -1,14 +1,21 @@
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
-import { camelCase, equalByType, extractor, filterListType, pascalCase, snakeCase } from './utils';
-import { ClassNameModel } from './settings';
-import { Input } from './input';
-import { TypeDefinition } from './constructor';
-import { emptyClass } from './syntax/empty-class.syntax';
+import {
+  camelCase,
+  equalByType,
+  extractor,
+  filterListType,
+  pascalCase,
+  snakeCase,
+} from "./utils";
+import { ClassNameModel } from "./settings";
+import { Input } from "./input";
+import { TypeDefinition } from "./constructor";
+import { emptyClass } from "./syntax/empty-class.syntax";
 
-export const emptyListWarn = 'list is empty';
-export const ambiguousListWarn = 'list is ambiguous';
-export const ambiguousTypeWarn = 'type is ambiguous';
+export const emptyListWarn = "list is empty";
+export const ambiguousListWarn = "list is ambiguous";
+export const ambiguousTypeWarn = "type is ambiguous";
 
 export class Warning {
   warning: string;
@@ -49,13 +56,13 @@ export class WithWarning<T> {
  * @param {number} tabs how many tabs will be added.
  */
 export const printLine = (print: string, lines = 0, tabs = 0): string => {
-  var sb = '';
+  var sb = "";
 
   for (let i = 0; i < lines; i++) {
-    sb += '\n';
+    sb += "\n";
   }
   for (let i = 0; i < tabs; i++) {
-    sb += '\t';
+    sb += "\t";
   }
 
   sb += print;
@@ -64,11 +71,12 @@ export const printLine = (print: string, lines = 0, tabs = 0): string => {
 
 const includeIfNull = (jsonValue: string, input: Input): string => {
   const include = input.includeIfNull === true && input.nullSafety === false;
-  return include ? `${jsonValue} == null ? null : ` : '';
+  return include ? `${jsonValue} == null ? null : ` : "";
 };
 
 const jsonMapType = (input: Input): string => {
-  const type = input.nullSafety && input.avoidDynamicTypes ? 'Object?' : 'dynamic';
+  const type =
+    input.nullSafety && input.avoidDynamicTypes ? "Object?" : "dynamic";
   return `Map<String, ${type}>`;
 };
 
@@ -79,8 +87,9 @@ const jsonMapType = (input: Input): string => {
  */
 const suffix = (input: Input) => {
   const _suffix = input.fromAndToSuffix;
-  const suffix = input.jsonCodecs && _suffix.toLowerCase() === 'json' ? 'Map' : _suffix;
-  return input.codeGenerator === 'JSON' ? 'Json' : suffix;
+  const suffix =
+    input.jsonCodecs && _suffix.toLowerCase() === "json" ? "Map" : _suffix;
+  return input.codeGenerator === "JSON" ? "Json" : suffix;
 };
 
 /**
@@ -88,7 +97,7 @@ const suffix = (input: Input) => {
  * @param {string} jsonKey a raw JSON key.
  */
 const jsonKeyAnnotation = (name: string, jsonKey: string): string => {
-  return name !== jsonKey ? `@JsonKey(name: '${jsonKey}') ` : '';
+  return name !== jsonKey ? `@JsonKey(name: '${jsonKey}') ` : "";
 };
 
 /**
@@ -98,9 +107,9 @@ const jsonKeyAnnotation = (name: string, jsonKey: string): string => {
  */
 const questionMark = (input: Input, typeDef?: TypeDefinition): string => {
   if (typeDef) {
-    return input.nullSafety && typeDef.nullable ? '?' : '';
+    return input.nullSafety && typeDef.nullable ? "?" : "";
   } else {
-    return input.nullSafety ? '?' : '';
+    return input.nullSafety ? "?" : "";
   }
 };
 
@@ -112,29 +121,31 @@ const questionMark = (input: Input, typeDef?: TypeDefinition): string => {
 const defaultValue = (
   typeDef: TypeDefinition,
   nullable: boolean = false,
-  freezed: boolean = false,
+  freezed: boolean = false
 ): string => {
-  if (!typeDef.defaultValue) { return ''; }
+  if (!typeDef.defaultValue) {
+    return "";
+  }
   if (typeDef.isList && typeDef.type !== null) {
-    const listType = typeDef.type?.replace(/List/g, '');
+    const listType = typeDef.type?.replace(/List/g, "");
     const listTypes = filterListType(typeDef.type);
     if (!freezed) {
       const withType = ` = const ${listType}[]`;
-      const withoutType = ' = const []';
+      const withoutType = " = const []";
       return listTypes.length > 1 ? withoutType : withType;
     } else {
       const withType = ` @Default(${listType}[])`;
-      const withoutType = ' @Default([])';
+      const withoutType = " @Default([])";
       return listTypes.length > 1 ? withoutType : withType;
     }
   } else if (typeDef.isDate) {
     if (!freezed) {
-      const questionMark = nullable ? '?' : '';
+      const questionMark = nullable ? "?" : "";
       return `${typeDef.type}${questionMark} ${typeDef.name}`;
     } else {
-      return '';
+      return "";
     }
-  } else if (typeDef.type?.startsWith('String')) {
+  } else if (typeDef.type?.startsWith("String")) {
     const freezedDefaultString = ` @Default('${typeDef.value}')`;
     const defaultString = ` = '${typeDef.value}'`;
     return freezed ? freezedDefaultString : defaultString;
@@ -144,35 +155,45 @@ const defaultValue = (
   return freezed ? freezedDefaultValue : defaultValue;
 };
 
-const defaultDateTime = (
-  fields: Dependency[],
-  input: Input,
-): string => {
-  let sb = '';
+const defaultDateTime = (fields: Dependency[], input: Input): string => {
+  let sb = "";
   const dates = fields.filter(
     (v) => v.typeDef.isDate && !v.typeDef.isList && v.typeDef.defaultValue
   );
-  if (!dates.length) { return sb; }
+  if (!dates.length) {
+    return sb;
+  }
   if (input.freezed) {
     for (let i = 0; i < dates.length; i++) {
       const typeDef = dates[i].typeDef;
-      const optional = 'optional' + pascalCase(typeDef.name);
+      const optional = "optional" + pascalCase(typeDef.name);
       const expressionBody = (): string => {
-        let body = '';
+        let body = "";
         body += printLine(`DateTime get ${typeDef.name} => ${optional}`, 1, 1);
-        body += printLine(` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)};`);
+        body += printLine(
+          ` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)};`
+        );
         return body;
       };
       const blockBody = (): string => {
-        let body = '';
+        let body = "";
         body += printLine(`DateTime get ${typeDef.name} {`, 1, 1);
-        body += printLine(`return ${optional} ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)};`, 1, 2);
-        body += printLine('}', 1, 1);
+        body += printLine(
+          `return ${optional} ?? ${parseDateTime(
+            `'${typeDef.value}'`,
+            true,
+            typeDef,
+            input
+          )};`,
+          1,
+          2
+        );
+        body += printLine("}", 1, 1);
         return body;
       };
-      sb += '\n';
+      sb += "\n";
       if (!input.nullSafety) {
-        sb += printLine('@late', 1, 1);
+        sb += printLine("@late", 1, 1);
         sb += expressionBody();
       } else {
         sb += expressionBody().length > 78 ? blockBody() : expressionBody();
@@ -181,24 +202,33 @@ const defaultDateTime = (
   } else {
     for (let i = 0; i < dates.length; i++) {
       const typeDef = dates[i].typeDef;
-      const comma: string = dates.length - 1 === i ? '' : ',';
+      const comma: string = dates.length - 1 === i ? "" : ",";
       if (i === 0) {
         sb += printLine(`\t: ${typeDef.name} = ${typeDef.name}`);
-        sb += printLine(` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)}`) + comma;
+        sb +=
+          printLine(
+            ` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)}`
+          ) + comma;
       } else {
         sb += printLine(`\n\t\t\t\t${typeDef.name} = ${typeDef.name}`);
-        sb += printLine(` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)}`) + comma;
+        sb +=
+          printLine(
+            ` ?? ${parseDateTime(`'${typeDef.value}'`, true, typeDef, input)}`
+          ) + comma;
       }
     }
   }
   return sb;
 };
 
-const requiredValue = (required: boolean = false, nullSafety: boolean = false): string => {
+const requiredValue = (
+  required: boolean = false,
+  nullSafety: boolean = false
+): string => {
   if (required) {
-    return nullSafety ? 'required ' : '@required ';
+    return nullSafety ? "required " : "@required ";
   } else {
-    return '';
+    return "";
   }
 };
 
@@ -207,7 +237,7 @@ const requiredValue = (required: boolean = false, nullSafety: boolean = false): 
  * @param valueKey The key of the value in the JSON
  */
 export const valueFromJson = (valueKey: string, input: Input): string => {
-  const mapValue = input.jsonCodecs ? 'data' : 'json';
+  const mapValue = input.jsonCodecs ? "data" : "json";
   return `${mapValue}['${valueKey}']`;
 };
 
@@ -220,73 +250,138 @@ export const joinAsClass = (key: string, value: string): string => {
   return `${key}: ${value},`;
 };
 
-const jsonParseClass = (key: string, typeDef: TypeDefinition, input: Input): string => {
+const jsonParseClass = (
+  key: string,
+  typeDef: TypeDefinition,
+  input: Input
+): string => {
   const jsonValue = valueFromJson(typeDef.jsonKey, input);
   const type = typeDef.type;
   // IMPORTANT. To keep the formatting correct.
-  // By using block body. Default tabs are longTab = 5; shortTab = 3; 
-  // By using expresion body. Default tabs are longTab = 6; shortTab = 4; 
+  // By using block body. Default tabs are longTab = 5; shortTab = 3;
+  // By using expresion body. Default tabs are longTab = 6; shortTab = 4;
   const longTab = 6;
   const shortTab = 4;
-  let formatedValue = '';
-  if (type !== null && !typeDef.isPrimitive || type !== null && typeDef.isDate) {
+  let formatedValue = "";
+  if (
+    (type !== null && !typeDef.isPrimitive) ||
+    (type !== null && typeDef.isDate)
+  ) {
     if (typeDef.isList) {
       // Responsive farmatting.
       // List of List Classes (List<List.......<Class>>)
       // This will generate deeply nested infinity list depending on how many lists are in the lists.
       const result = filterListType(type);
-      formatedValue = printLine(`(${jsonValue} as List<dynamic>${questionMark(input, typeDef)})`);
+      formatedValue = printLine(
+        `(${jsonValue} as List<dynamic>${questionMark(input, typeDef)})`
+      );
       for (let i = 0; i < result.length - 1; i++) {
         var index = i * 2;
         const tabs = longTab + index;
         if (input.nullSafety) {
           if (i === 0) {
-            formatedValue += printLine('?.map((e) => (e as List<dynamic>)', 1, tabs);
+            formatedValue += printLine(
+              "?.map((e) => (e as List<dynamic>)",
+              1,
+              tabs
+            );
           } else {
-            formatedValue += printLine('.map((e) => (e as List<dynamic>)', 1, tabs);
+            formatedValue += printLine(
+              ".map((e) => (e as List<dynamic>)",
+              1,
+              tabs
+            );
           }
         } else {
-          formatedValue += printLine('?.map((e) => (e as List<dynamic>)', 1, tabs);
+          formatedValue += printLine(
+            "?.map((e) => (e as List<dynamic>)",
+            1,
+            tabs
+          );
         }
       }
       if (input.nullSafety) {
         const tabs = shortTab + 2 * result.length;
         if (result.length > 1) {
           if (typeDef.isDate) {
-            formatedValue += printLine(`.map((e) => ${parseDateTime('e', false, typeDef, input)})`, 1, tabs);
+            formatedValue += printLine(
+              `.map((e) => ${parseDateTime("e", false, typeDef, input)})`,
+              1,
+              tabs
+            );
           } else {
-            formatedValue += printLine(`.map((e) => ${buildParseClass(key, 'e', typeDef, input)})`, 1, tabs);
+            formatedValue += printLine(
+              `.map((e) => ${buildParseClass(key, "e", typeDef, input)})`,
+              1,
+              tabs
+            );
           }
         } else {
           if (typeDef.isDate) {
-            formatedValue += printLine(`?.map((e) => ${parseDateTime('e', false, typeDef, input)})`, 1, tabs);
+            formatedValue += printLine(
+              `?.map((e) => ${parseDateTime("e", false, typeDef, input)})`,
+              1,
+              tabs
+            );
           } else {
-            formatedValue += printLine(`?.map((e) => ${buildParseClass(key, 'e', typeDef, input)})`, 1, tabs);
+            formatedValue += printLine(
+              `?.map((e) => ${buildParseClass(key, "e", typeDef, input)})`,
+              1,
+              tabs
+            );
           }
         }
       } else {
-        formatedValue += printLine('?.map((e) => e == null', 1, shortTab + 2 * result.length);
-        formatedValue += printLine('? null', 1, longTab + 2 * result.length);
+        formatedValue += printLine(
+          "?.map((e) => e == null",
+          1,
+          shortTab + 2 * result.length
+        );
+        formatedValue += printLine("? null", 1, longTab + 2 * result.length);
         if (typeDef.isDate) {
-          formatedValue += printLine(`: ${parseDateTime('e', false, typeDef, input)})`, 1, longTab + 2 * result.length);
+          formatedValue += printLine(
+            `: ${parseDateTime("e", false, typeDef, input)})`,
+            1,
+            longTab + 2 * result.length
+          );
         } else {
-          formatedValue += printLine(`: ${buildParseClass(key, 'e', typeDef, input)})`, 1, longTab + 2 * result.length);
+          formatedValue += printLine(
+            `: ${buildParseClass(key, "e", typeDef, input)})`,
+            1,
+            longTab + 2 * result.length
+          );
         }
       }
       for (let i = 0; i < result.length - 1; i++) {
         var index = i * 2;
         const tabs = shortTab + 2 * result.length - index;
-        formatedValue += printLine(input.nullSafety ? '.toList())' : '?.toList())', 1, tabs);
+        formatedValue += printLine(
+          input.nullSafety ? ".toList())" : "?.toList())",
+          1,
+          tabs
+        );
       }
-      formatedValue += printLine(input.nullSafety ? '.toList()' : '?.toList()', 1, longTab);
+      formatedValue += printLine(
+        input.nullSafety ? ".toList()" : "?.toList()",
+        1,
+        longTab
+      );
     } else {
       // Class
       formatedValue += printLine(`${jsonValue} == null`);
-      formatedValue += printLine('? null', 1, longTab);
+      formatedValue += printLine("? null", 1, longTab);
       if (typeDef.isDate) {
-        formatedValue += printLine(`: ${parseDateTime(jsonValue, false, typeDef, input)}`, 1, longTab);
+        formatedValue += printLine(
+          `: ${parseDateTime(jsonValue, false, typeDef, input)}`,
+          1,
+          longTab
+        );
       } else {
-        formatedValue += printLine(`: ${buildParseClass(key, jsonValue, typeDef, input)}`, 1, longTab);
+        formatedValue += printLine(
+          `: ${buildParseClass(key, jsonValue, typeDef, input)}`,
+          1,
+          longTab
+        );
       }
     }
   }
@@ -301,8 +396,11 @@ const toJsonClass = (
   const fieldKey = typeDef.getName(privateField);
   const thisKey = `${fieldKey}`;
   const type = typeDef.type;
-  var sb = '';
-  if (type !== null && !typeDef.isPrimitive || type !== null && typeDef.isDate) {
+  var sb = "";
+  if (
+    (type !== null && !typeDef.isPrimitive) ||
+    (type !== null && typeDef.isDate)
+  ) {
     if (typeDef.isList) {
       const result = filterListType(type);
       if (result.length > 1) {
@@ -312,38 +410,71 @@ const toJsonClass = (
         if (input.nullSafety) {
           const isNullable = typeDef.nullable;
           sb += printLine(`'${typeDef.jsonKey}': ${thisKey}?`);
-          sb += Array.from(result).map(_ => printLine('.map((e) => e')).slice(0, -1).join('');
+          sb += Array.from(result)
+            .map((_) => printLine(".map((e) => e"))
+            .slice(0, -1)
+            .join("");
           if (typeDef.isDate) {
-            sb += printLine(`.map((e) => ${toIsoString('e', isNullable)})`);
+            sb += printLine(`.map((e) => ${toIsoString("e", isNullable)})`);
           } else {
-            sb += printLine(`.map((e) => ${buildToJsonClass('e', isNullable, input)})`);
+            sb += printLine(
+              `.map((e) => ${buildToJsonClass("e", isNullable, input)})`
+            );
           }
-          sb += Array.from(result).map(_ => printLine('.toList())')).slice(0, -1).join('');
-          sb += printLine('.toList(),');
+          sb += Array.from(result)
+            .map((_) => printLine(".toList())"))
+            .slice(0, -1)
+            .join("");
+          sb += printLine(".toList(),");
         } else {
           sb += printLine(`'${typeDef.jsonKey}': ${thisKey}`);
-          sb += Array.from(result).map(_ => printLine('?.map((e) => e')).slice(0, -1).join('');
+          sb += Array.from(result)
+            .map((_) => printLine("?.map((e) => e"))
+            .slice(0, -1)
+            .join("");
           if (typeDef.isDate) {
-            sb += printLine(`?.map((e) => ${toIsoString('e')})`);
+            sb += printLine(`?.map((e) => ${toIsoString("e")})`);
           } else {
-            sb += printLine(`?.map((e) => ${buildToJsonClass('e', false, input)})`);
+            sb += printLine(
+              `?.map((e) => ${buildToJsonClass("e", false, input)})`
+            );
           }
-          sb += Array.from(result).map(_ => printLine('?.toList())')).slice(0, -1).join('');
-          sb += printLine('?.toList(),');
+          sb += Array.from(result)
+            .map((_) => printLine("?.toList())"))
+            .slice(0, -1)
+            .join("");
+          sb += printLine("?.toList(),");
         }
       } else {
         if (input.nullSafety) {
           const isNullable = typeDef.nullable;
           if (typeDef.isDate) {
-            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${toIsoString('e', isNullable)}).toList(),`;
+            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${toIsoString(
+              "e",
+              isNullable
+            )}).toList(),`;
           } else {
-            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${buildToJsonClass('e', isNullable, input)}).toList(),`;
+            sb = `'${
+              typeDef.jsonKey
+            }': ${thisKey}?.map((e) => ${buildToJsonClass(
+              "e",
+              isNullable,
+              input
+            )}).toList(),`;
           }
         } else {
           if (typeDef.isDate) {
-            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${toIsoString('e')})?.toList(),`;
+            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${toIsoString(
+              "e"
+            )})?.toList(),`;
           } else {
-            sb = `'${typeDef.jsonKey}': ${thisKey}?.map((e) => ${buildToJsonClass('e', false, input)})?.toList(),`;
+            sb = `'${
+              typeDef.jsonKey
+            }': ${thisKey}?.map((e) => ${buildToJsonClass(
+              "e",
+              false,
+              input
+            )})?.toList(),`;
           }
         }
       }
@@ -353,7 +484,11 @@ const toJsonClass = (
       if (typeDef.isDate) {
         sb = `'${typeDef.jsonKey}': ${toIsoString(thisKey, isNullable)},`;
       } else {
-        sb = `'${typeDef.jsonKey}': ${buildToJsonClass(thisKey, isNullable, input)},`;
+        sb = `'${typeDef.jsonKey}': ${buildToJsonClass(
+          thisKey,
+          isNullable,
+          input
+        )},`;
       }
     }
   }
@@ -367,26 +502,38 @@ export function jsonParseValue(
 ) {
   const jsonValue = valueFromJson(key, input);
   const nullable = questionMark(input, typeDef);
-  const isDouble = typeDef.type === 'double';
+  const isDouble = typeDef.type === "double";
   const dafaultVal = typeDef.defaultValue
-    ? `${isDouble ? '' : '?'} ?? ${defaultValue(typeDef, input.nullSafety, false).replace(/=|const/gi, '').trim()}`
-    : '';
+    ? `${isDouble ? "" : "?"} ?? ${defaultValue(
+        typeDef,
+        input.nullSafety,
+        false
+      )
+        .replace(/=|const/gi, "")
+        .trim()}`
+    : "";
   const IfNull = `${includeIfNull(jsonValue, input)}`;
-  let formatedValue = '';
+  let formatedValue = "";
 
   if (typeDef.isPrimitive) {
-    const required = typeDef.required && input.avoidDynamicTypes ? '!' : '';
+    const required = typeDef.required && input.avoidDynamicTypes ? "!" : "";
 
     if (typeDef.isDate) {
       formatedValue = jsonParseClass(key, typeDef, input);
     } else {
       if (!typeDef.nullable && !typeDef.isList) {
         formatedValue = `${jsonValue}`;
-      } if (isDouble) {
-        const nullableDouble = input.nullSafety && !typeDef.required ? '?' : '';
-        formatedValue = `${IfNull}(${jsonValue}${required} as num${nullableDouble})${nullableDouble}.toDouble()` + dafaultVal;
+      }
+      if (isDouble) {
+        const nullableDouble = input.nullSafety && !typeDef.required ? "?" : "";
+        formatedValue =
+          `${IfNull}(${jsonValue}${required} as num${nullableDouble})${nullableDouble}.toDouble()` +
+          dafaultVal;
       } else {
-        formatedValue = `${IfNull}${jsonValue}${required} as ${typeDef.type}` + nullable + dafaultVal;
+        formatedValue =
+          `${IfNull}${jsonValue}${required} as ${typeDef.type}` +
+          nullable +
+          dafaultVal;
       }
     }
   } else {
@@ -398,7 +545,7 @@ export function jsonParseValue(
 export function toJsonExpression(
   typeDef: TypeDefinition,
   privateField: boolean,
-  input: Input,
+  input: Input
 ): string {
   const fieldKey = typeDef.getName(privateField);
   const thisKey = `${fieldKey}`;
@@ -413,18 +560,31 @@ export function toJsonExpression(
   }
 }
 
-const buildToJsonClass = (expression: string, nullSafety: boolean = false, input: Input): string => {
-  return nullSafety ?
-    `${expression}.to${suffix(input)}()` :
-    `${expression}?.to${suffix(input)}()`;
+const buildToJsonClass = (
+  expression: string,
+  nullSafety: boolean = false,
+  input: Input
+): string => {
+  return nullSafety
+    ? `${expression}.to${suffix(input)}()`
+    : `${expression}?.to${suffix(input)}()`;
 };
 
-const buildParseClass = (className: string, expression: string, typeDef: TypeDefinition, input: Input): string => {
+const buildParseClass = (
+  className: string,
+  expression: string,
+  typeDef: TypeDefinition,
+  input: Input
+): string => {
   const _suffix = input.fromAndToSuffix;
-  const suffix = input.jsonCodecs && _suffix.toLowerCase() === 'json' ? 'Map' : _suffix;
-  const name = pascalCase(className).replace(/_/g, '');
-  const bangOperator = jsonMapType(input).match('Object?') && !typeDef.isList ? '!' : '';
-  return `${name}.from${suffix}(${expression}${bangOperator} as ${jsonMapType(input)})`;
+  const suffix =
+    input.jsonCodecs && _suffix.toLowerCase() === "json" ? "Map" : _suffix;
+  const name = pascalCase(className).replace(/_/g, "");
+  const bangOperator =
+    jsonMapType(input).match("Object?") && !typeDef.isList ? "!" : "";
+  return `${name}.from${suffix}(${expression}${bangOperator} as ${jsonMapType(
+    input
+  )})`;
 };
 
 /**
@@ -433,14 +593,23 @@ const buildParseClass = (className: string, expression: string, typeDef: TypeDef
  * @param {boolean} clean if it is true then returns without without argument type.
  * @returns a string "DateTime.parse(expression)".
  */
-const parseDateTime = (expression: string, withoutTypeCast: boolean = false, typeDef: TypeDefinition, input: Input): string => {
-  const bangOperator = input.nullSafety && input.avoidDynamicTypes && !typeDef.isList ? '!' : '';
+const parseDateTime = (
+  expression: string,
+  withoutTypeCast: boolean = false,
+  typeDef: TypeDefinition,
+  input: Input
+): string => {
+  const bangOperator =
+    input.nullSafety && input.avoidDynamicTypes && !typeDef.isList ? "!" : "";
   const withArgumentType = `DateTime.parse(${expression}${bangOperator} as String)`;
   const withoutArgumentType = `DateTime.parse(${expression})`;
   return withoutTypeCast ? withoutArgumentType : withArgumentType;
 };
 
-const toIsoString = (expression: string, nullSafety: boolean = false): string => {
+const toIsoString = (
+  expression: string,
+  nullSafety: boolean = false
+): string => {
   const withNullCheck = `${expression}?.toIso8601String()`;
   const withoutNullCheck = `${expression}.toIso8601String()`;
   return nullSafety ? withoutNullCheck : withNullCheck;
@@ -464,7 +633,7 @@ export class ClassDefinition {
   private _name: string;
   private _path: string;
   private _privateFields: boolean;
-  private nameEnhancement: string = '';
+  private nameEnhancement: string = "";
   fields: Dependency[] = [];
 
   constructor(model: ClassNameModel, privateFields = false) {
@@ -487,9 +656,9 @@ export class ClassDefinition {
     this._name = pascalCase(name);
   }
 
-  /** A class that converted back to the value 
+  /** A class that converted back to the value
    * @returns as object.
-  */
+   */
   get value() {
     const keys = this.fields.map((k) => k.name);
     const values = this.fields.map((v) => v.typeDef.value);
@@ -561,7 +730,9 @@ export class ClassDefinition {
     return dependenciesList;
   }
 
-  private getFields(callbackfn: (typeDef: TypeDefinition, key: string) => any): TypeDefinition[] {
+  private getFields(
+    callbackfn: (typeDef: TypeDefinition, key: string) => any
+  ): TypeDefinition[] {
     return this.fields.map((v) => callbackfn(v.typeDef, v.name));
   }
 
@@ -590,11 +761,7 @@ export class ClassDefinition {
   };
 
   hasField(otherField: TypeDefinition) {
-    return (
-      this.fields.filter(
-        (k) => _.isEqual(k.typeDef, otherField)
-      ) !== null
-    );
+    return this.fields.filter((k) => _.isEqual(k.typeDef, otherField)) !== null;
   }
 
   addField(name: string, typeDef: TypeDefinition) {
@@ -602,39 +769,38 @@ export class ClassDefinition {
   }
 
   private addType(typeDef: TypeDefinition, input: Input) {
-    const isDynamic = typeDef.type?.match('dynamic') && !typeDef.isList;
+    const isDynamic = typeDef.type?.match("dynamic") && !typeDef.isList;
 
     return isDynamic
       ? typeDef.type
       : typeDef.type + questionMark(input, typeDef);
-
   }
 
   private fieldList(input: Input): string {
     return this.getFields((f) => {
       const fieldName = f.getName(this._privateFields);
-      var sb = '\t';
+      var sb = "\t";
       if (input.isImmutable) {
         sb += this.finalKeyword(true);
       }
       sb += this.addType(f, input) + ` ${fieldName};`;
       return sb;
-    }).join('\n');
+    }).join("\n");
   }
 
   private fieldListCodeGen(input: Input): string {
-    const final = input.isImmutable ? this.finalKeyword(true) : '';
-    let sb = '';
+    const final = input.isImmutable ? this.finalKeyword(true) : "";
+    let sb = "";
 
     for (const f of this.fields.map((v) => v.typeDef)) {
       const fieldName = f.getName(this._privateFields);
       const jsonKey = jsonKeyAnnotation(f.name, f.jsonKey);
 
       if (jsonKey.length) {
-        sb += '\t' + jsonKey + '\n';
+        sb += "\t" + jsonKey + "\n";
       }
 
-      sb += '\t' + final + this.addType(f, input) + ` ${fieldName};` + '\n';
+      sb += "\t" + final + this.addType(f, input) + ` ${fieldName};` + "\n";
     }
 
     return sb;
@@ -645,19 +811,20 @@ export class ClassDefinition {
    * @param {Input} input user input.
    */
   private freezedField(input: Input): string {
-    var sb = '';
+    var sb = "";
     const nonConstatValue = this.fields.some((f) => {
       return f.typeDef.isDate && !f.typeDef.isList && f.typeDef.defaultValue;
     });
-    const privatConstructor = input.nullSafety && nonConstatValue
-      ? printLine(`${this.name}._();`, 2, 1)
-      : '';
-    sb += printLine('@freezed');
-    sb += printLine(`${input.nullSafety ? '' : 'abstract '}class ${this.name} with `, 1);
-    sb += printLine(`_$${this.name} {`);
+    const privatConstructor =
+      input.nullSafety && nonConstatValue
+        ? printLine(`${this.name}._();`, 2, 1)
+        : "";
+    sb += printLine("@freezed");
+    sb += printLine(`abstract class ${this.name}`, 1);
+    sb += printLine(`with _$${this.name} {`);
     sb += printLine(`factory ${this.name}({`, 1, 1);
     for (const typeDef of this.fields.map((v) => v.typeDef)) {
-      const optional = 'optional' + pascalCase(typeDef.name);
+      const optional = "optional" + pascalCase(typeDef.name);
       const fieldName = typeDef.getName(this._privateFields);
       const jsonKey = jsonKeyAnnotation(typeDef.name, typeDef.jsonKey);
       const defaultVal = defaultValue(typeDef, input.nullSafety, true);
@@ -669,12 +836,12 @@ export class ClassDefinition {
       } else {
         sb += printLine(`${this.addType(typeDef, input)} ${fieldName},`);
       }
-    };
+    }
     sb += printLine(`}) = _${this.name};`, 1, 1);
     sb += privatConstructor;
     sb += printLine(`${this.codeGenJsonParseFunc(input)}`);
     sb += defaultDateTime(this.fields, input);
-    sb += printLine('}', 1);
+    sb += printLine("}", 1);
     return sb;
   }
 
@@ -683,14 +850,20 @@ export class ClassDefinition {
    * @param {Input} input user input.
    */
   private equatablePropList(input: Input): string {
-    if (!input.equatable) { return ''; }
+    if (!input.equatable) {
+      return "";
+    }
     const fields = Array.from(this.fields.values());
     const expressionBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
-      sb += printLine(`List<Object${questionMark(input)}> get props => [`, 1, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
+      sb += printLine(
+        `List<Object${questionMark(input)}> get props => [`,
+        1,
+        1
+      );
       for (let i = 0; i < fields.length; i++) {
-        const separator = fields.length - 1 === i ? '];' : ', ';
+        const separator = fields.length - 1 === i ? "];" : ", ";
         const f = fields[i];
         sb += `${f.typeDef.getName(this._privateFields)}`;
         sb += separator;
@@ -699,23 +872,22 @@ export class ClassDefinition {
     };
 
     const blockBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
       sb += printLine(`List<Object${questionMark(input)}> get props {`, 1, 1);
-      sb += printLine('return [', 1, 2);
+      sb += printLine("return [", 1, 2);
       for (let i = 0; i < fields.length; i++) {
         const f = fields[i];
         sb += printLine(`${f.typeDef.getName(this._privateFields)},`, 1, 4);
       }
-      sb += printLine('];', 1, 2);
-      sb += printLine('}', 1, 1);
+      sb += printLine("];", 1, 2);
+      sb += printLine("}", 1, 1);
       return sb;
     };
 
     var isShort = expressionBody().length < 87;
 
     return isShort ? expressionBody() : blockBody();
-
   }
 
   /**
@@ -724,10 +896,12 @@ export class ClassDefinition {
    * @returns string block.
    */
   private stringify(print: boolean = false): string {
-    if (!print) { return ''; }
-    var sb = '';
-    sb += printLine('@override', 2, 1);
-    sb += printLine('bool get stringify => true;', 1, 1);
+    if (!print) {
+      return "";
+    }
+    var sb = "";
+    sb += printLine("@override", 2, 1);
+    sb += printLine("bool get stringify => true;", 1, 1);
     return sb;
   }
 
@@ -736,7 +910,7 @@ export class ClassDefinition {
    * @param immutable should print the keyword or not
    */
   private finalKeyword(immutable: boolean = false): string {
-    return immutable ? 'final ' : '';
+    return immutable ? "final " : "";
   }
 
   /**
@@ -744,56 +918,69 @@ export class ClassDefinition {
    * @param immutable should print the keyword or not.
    */
   private constKeyword(immutable: boolean = false): string {
-    return immutable ? 'const ' : '';
+    return immutable ? "const " : "";
   }
 
   private dartImports(input: Input): string {
-    return input.jsonCodecs ? "import 'dart:convert';\n\n" : '';
-  };
+    return input.jsonCodecs ? "import 'dart:convert';\n\n" : "";
+  }
 
   /**
    * All imports from the packages library.
    * @param {Input} input the input from the user.
    */
   private importsFromPackage(input: Input): string {
-    var imports = '';
-    const required = this.fields.some((f) => f.typeDef.required && !input.nullSafety);
-    const listEquality = this.fields.some((f) => f.typeDef.isList && input.equality === 'Dart');
+    var imports = "";
+    const required = this.fields.some(
+      (f) => f.typeDef.required && !input.nullSafety
+    );
+    const listEquality = this.fields.some(
+      (f) => f.typeDef.isList && input.equality === "Dart"
+    );
     // Sorted alphabetically for effective dart style.
-    imports += input.equatable && !input.freezed
-      ? "import 'package:equatable/equatable.dart';\n"
-      : '';
-    imports += input.immutable && !input.serializable || input.equality === 'Dart' // || required || listEquality
-      ? "import 'package:collection/collection.dart';\n"
-      : '';
-    imports += input.serializable && !input.freezed
-      ? 'import \'package:json_annotation/json_annotation.dart\';\n'
-      : '';
+    imports +=
+      input.equatable && !input.freezed
+        ? "import 'package:equatable/equatable.dart';\n"
+        : "";
+    imports +=
+      (input.immutable && !input.serializable) || input.equality === "Dart" // || required || listEquality
+        ? "import 'package:collection/collection.dart';\n"
+        : "";
+    imports +=
+      input.serializable && !input.freezed
+        ? "import 'package:json_annotation/json_annotation.dart';\n"
+        : "";
     imports += input.freezed
       ? "import 'package:freezed_annotation/freezed_annotation.dart';\n"
-      : '';
+      : "";
 
     if (imports.length === 0) {
       return imports;
     } else {
-      return imports += '\n';
+      return (imports += "\n");
     }
-  };
+  }
 
   private importsForParts(input: Input): string {
-    var imports = '';
-    imports += input.freezed ? `part '${this._path}${this.nameEnhancement}.freezed.dart';\n` : '';
-    imports += input.generate ? `part '${this._path}${this.nameEnhancement}.g.dart';\n` : '';
+    var imports = "";
+    imports += input.freezed
+      ? `part '${this._path}${this.nameEnhancement}.freezed.dart';\n`
+      : "";
+    imports += input.generate
+      ? `part '${this._path}${this.nameEnhancement}.g.dart';\n`
+      : "";
     if (imports.length === 0) {
       return imports;
     } else {
-      return imports += '\n';
+      return (imports += "\n");
     }
   }
 
   private importList(): string {
-    let imports = '';
-    const nameSet = new Set(this.fields.map((f) => f.typeDef.importName).sort());
+    let imports = "";
+    const nameSet = new Set(
+      this.fields.map((f) => f.typeDef.importName).sort()
+    );
     const names = [...nameSet];
 
     for (const name of names) {
@@ -805,7 +992,7 @@ export class ClassDefinition {
     if (imports.length === 0) {
       return imports;
     } else {
-      return imports += '\n';
+      return (imports += "\n");
     }
   }
 
@@ -813,18 +1000,18 @@ export class ClassDefinition {
     return this.getFields((f) => {
       var publicName = f.getName(false);
       var privateName = f.getName(true);
-      var sb = '';
-      sb += '\t';
+      var sb = "";
+      sb += "\t";
       sb += this.addType(f, input);
       sb += `get ${publicName} => ${privateName};\n\tset ${publicName}(`;
       sb += this.addType(f, input);
       sb += ` ${publicName}) => ${privateName} = ${publicName};`;
       return sb;
-    }).join('\n');
+    }).join("\n");
   }
 
   private defaultPrivateConstructor(input: Input): string {
-    var sb = '';
+    var sb = "";
     sb += `\t${this.name}({`;
     var i = 0;
     var len = Array.from(this.fields.keys()).length - 1;
@@ -833,22 +1020,22 @@ export class ClassDefinition {
       sb += this.addType(f, input);
       sb += ` ${publicName}`;
       if (i !== len) {
-        sb += ', ';
+        sb += ", ";
       }
       i++;
     });
-    sb += '}) {\n';
+    sb += "}) {\n";
     this.getFields((f) => {
       var publicName = f.getName(false);
       var privateName = f.getName(true);
       sb += `this.${privateName} = ${publicName};\n`;
     });
-    sb += '}';
+    sb += "}";
     return sb;
   }
 
   private defaultConstructor(input: Input): string {
-    let constructor = '';
+    let constructor = "";
     const values = this.fields.map((v) => v.typeDef);
     const defaultDate = defaultDateTime(this.fields, input);
     const isDefaultDate = defaultDate.length > 0;
@@ -857,30 +1044,30 @@ export class ClassDefinition {
     };
     const hasConstant = values.some(areConstant);
     const expression = (lines: number, tabs: number): string => {
-      let sb = '';
-      sb += '\t';
-      sb += hasConstant ? '' : this.constKeyword(input.isImmutable);
+      let sb = "";
+      sb += "\t";
+      sb += hasConstant ? "" : this.constKeyword(input.isImmutable);
       sb += `${this.name}({`;
       values.forEach((f) => {
         const name = f.getName(this._privateFields);
         const isDefaultDate = f.isDate && f.defaultValue && !f.isList;
-        const thisKeyword = isDefaultDate ? '' : `this.${name}`;
+        const thisKeyword = isDefaultDate ? "" : `this.${name}`;
         const required = requiredValue(f.required, input.nullSafety);
         const defaultVal = defaultValue(f, input.nullSafety);
         const field = required + thisKeyword + defaultVal;
         sb += printLine(`${field}, `, lines, tabs);
       });
-      sb += printLine('});', lines, tabs >= 1 ? 1 : 0);
+      sb += printLine("});", lines, tabs >= 1 ? 1 : 0);
       return sb;
     };
     const isShort = expression(0, 0).length < 78;
     if (isShort && !isDefaultDate) {
       // Expression body.
-      constructor = expression(0, 0).replace(', });', '});');
+      constructor = expression(0, 0).replace(", });", "});");
     } else if (isDefaultDate) {
       // Force print block body for better format.
       // Block body with initialized non-constant values.
-      constructor = expression(1, 2).replace('});', '})');
+      constructor = expression(1, 2).replace("});", "})");
       constructor += printLine(`${defaultDate};`, 0, 1);
     } else {
       // Block body.
@@ -891,67 +1078,94 @@ export class ClassDefinition {
   }
 
   private jsonParseFunc(input: Input): string {
-    const mapValue = input.jsonCodecs ? 'data' : 'json';
+    const mapValue = input.jsonCodecs ? "data" : "json";
     const blockBody = (): string => {
-      let sb = '';
+      let sb = "";
       sb += printLine(`factory ${this.name}`, 2, 1);
-      sb += printLine(`.from${suffix(input)}(${jsonMapType(input)} ${mapValue}) {`);
+      sb += printLine(
+        `.from${suffix(input)}(${jsonMapType(input)} ${mapValue}) {`
+      );
       sb += printLine(`return ${this.name}(\n`, 1, 2);
       sb += this.getFields((f, k) => {
         // Check forced type for only not primitive type.
-        const key = k.match('.') && !f.isList && f.type && !f.isPrimitive ? f.type : k;
-        return `\t\t\t${joinAsClass(f.getName(this._privateFields), jsonParseValue(key, f, input))}`;
-      }).join('\n');
-      sb += printLine(');', 1, 2);
-      sb += printLine('}\n\n', 1, 1);
+        const key =
+          k.match(".") && !f.isList && f.type && !f.isPrimitive ? f.type : k;
+        return `\t\t\t${joinAsClass(
+          f.getName(this._privateFields),
+          jsonParseValue(key, f, input)
+        )}`;
+      }).join("\n");
+      sb += printLine(");", 1, 2);
+      sb += printLine("}\n\n", 1, 1);
       return sb;
     };
 
     const expressionBody = (): string => {
-      let sb = '';
+      let sb = "";
       sb += printLine(`factory ${this.name}`, 2, 1);
-      sb += printLine(`.from${suffix(input)}(${jsonMapType(input)} ${mapValue}) => `);
+      sb += printLine(
+        `.from${suffix(input)}(${jsonMapType(input)} ${mapValue}) => `
+      );
       sb += printLine(`${this.name}(\n`);
       sb += this.getFields((f, k) => {
         // Check forced type for only not primitive type.
-        const key = k.match('.') && !f.isList && f.type && !f.isPrimitive ? f.type : k;
-        return `\t\t\t\t${joinAsClass(f.getName(this._privateFields), jsonParseValue(key, f, input))}`;
-      }).join('\n');
-      sb += printLine(');', 1, 3);
+        const key =
+          k.match(".") && !f.isList && f.type && !f.isPrimitive ? f.type : k;
+        return `\t\t\t\t${joinAsClass(
+          f.getName(this._privateFields),
+          jsonParseValue(key, f, input)
+        )}`;
+      }).join("\n");
+      sb += printLine(");", 1, 3);
       return sb;
     };
 
-    const line = expressionBody().substring(0, expressionBody().indexOf('(\n') + 1);
+    const line = expressionBody().substring(
+      0,
+      expressionBody().indexOf("(\n") + 1
+    );
 
     return line.length > 78 ? blockBody() : expressionBody();
   }
 
   private toJsonFunc(input: Input): string {
     const _suffix = input.fromAndToSuffix;
-    const suffix = input.jsonCodecs && _suffix.toLowerCase() === 'json' ? 'Map' : _suffix;
+    const suffix =
+      input.jsonCodecs && _suffix.toLowerCase() === "json" ? "Map" : _suffix;
     const blockBody = (): string => {
-      let sb = '';
+      let sb = "";
       sb += printLine(`${jsonMapType(input)} to${suffix}() {`, 2, 1);
-      sb += printLine('return {', 1, 2);
+      sb += printLine("return {", 1, 2);
       this.getFields((f) => {
-        sb += printLine(`${toJsonExpression(f, this._privateFields, input)}`, 1, 3);
+        sb += printLine(
+          `${toJsonExpression(f, this._privateFields, input)}`,
+          1,
+          3
+        );
       });
-      sb += printLine('};', 0, 2);
-      sb += printLine('}', 1, 1);
+      sb += printLine("};", 0, 2);
+      sb += printLine("}", 1, 1);
       return sb;
     };
 
     const expressionBody = (): string => {
-      var sb = '';
+      var sb = "";
       sb += printLine(`${jsonMapType(input)} to${suffix}() => {`, 2, 1);
       this.getFields((f) => {
-        sb += printLine(`${toJsonExpression(f, this._privateFields, input)}`, 1, 4);
+        sb += printLine(
+          `${toJsonExpression(f, this._privateFields, input)}`,
+          1,
+          4
+        );
       });
-      sb += printLine('};', 1, 3);
+      sb += printLine("};", 1, 3);
       return sb;
     };
 
-    const line = expressionBody().substring(0, expressionBody().indexOf('{\n') + 1);
+    const line = expressionBody().substring(
+      0,
+      expressionBody().indexOf("{\n") + 1
+    );
 
     return line.length > 80 ? blockBody() : expressionBody();
   }
@@ -962,18 +1176,18 @@ export class ClassDefinition {
    */
   private codeGenJsonParseFunc(input: Input): string {
     const expressionBody = (): string => {
-      let sb = '';
+      let sb = "";
       sb += printLine(`factory ${this.name}.`, 2, 1);
-      sb += 'fromJson(Map<String, dynamic> json) => ';
+      sb += "fromJson(Map<String, dynamic> json) => ";
       sb += `_$${this.name}FromJson(json);`;
       return sb;
     };
     const blockBody = (): string => {
-      let sb = '';
+      let sb = "";
       sb += printLine(`factory ${this.name}.`, 2, 1);
-      sb += 'fromJson(Map<String, dynamic> json) {';
+      sb += "fromJson(Map<String, dynamic> json) {";
       sb += printLine(`return _$${this.name}FromJson(json);`, 1, 2);
-      sb += printLine('}', 1, 1);
+      sb += printLine("}", 1, 1);
       return sb;
     };
     return expressionBody().length > 78 && !input.freezed
@@ -983,48 +1197,60 @@ export class ClassDefinition {
 
   private codeGenToJsonFunc(): string {
     const expressionBody = (): string => {
-      let sb = '';
-      sb += printLine('Map<String, dynamic> toJson() => _$', 0, 1);
+      let sb = "";
+      sb += printLine("Map<String, dynamic> toJson() => _$", 0, 1);
       sb += `${this.name}ToJson(this);`;
       return sb;
     };
     const blockBody = () => {
-      let sb = '';
-      sb += printLine('Map<String, dynamic> toJson() {', 0, 1);
+      let sb = "";
+      sb += printLine("Map<String, dynamic> toJson() {", 0, 1);
       sb += printLine(`return _$${this.name}ToJson(this);`, 1, 2);
-      sb += printLine('}', 1, 1);
+      sb += printLine("}", 1, 1);
       return sb;
     };
-    return expressionBody().length > 78
-      ? blockBody()
-      : expressionBody();
+    return expressionBody().length > 78 ? blockBody() : expressionBody();
   }
 
   private decodeFromJson(input: Input): string {
-    if (!input.jsonCodecs) { return ''; }
+    if (!input.jsonCodecs) {
+      return "";
+    }
 
     const comment = `
   /// \`dart:convert\`
   ///
   /// Parses the string and returns the resulting Json object as [${this.name}].`;
-    let sb = '';
+    let sb = "";
     sb += printLine(comment, 1);
     sb += printLine(`factory ${this.name}.fromJson(String data) {`, 1, 1);
-    sb += printLine(`return ${this.name}.from${suffix(input)}(json.decode(data) as ${jsonMapType(input)});`, 1, 2);
-    sb += printLine('}', 1, 1);
+    sb += printLine(
+      `return ${this.name}.from${suffix(
+        input
+      )}(json.decode(data) as ${jsonMapType(input)});`,
+      1,
+      2
+    );
+    sb += printLine("}", 1, 1);
     return sb;
   }
 
   private encodeToJson(input: Input): string {
-    if (!input.jsonCodecs) { return ''; }
+    if (!input.jsonCodecs) {
+      return "";
+    }
 
     const comment = `
   /// \`dart:convert\`
   ///
   /// Converts [${this.name}] to a JSON string.`;
-    let sb = '';
+    let sb = "";
     sb += printLine(comment);
-    sb += printLine(`String toJson() => json.encode(to${suffix(input)}());`, 1, 1);
+    sb += printLine(
+      `String toJson() => json.encode(to${suffix(input)}());`,
+      1,
+      1
+    );
     return sb;
   }
 
@@ -1033,22 +1259,28 @@ export class ClassDefinition {
    * @param {Input} input user input.
    */
   private copyWithMethod(input: Input): string {
-    if (!input.copyWith) { return ''; }
+    if (!input.copyWith) {
+      return "";
+    }
     const values = this.fields.map((v) => v.typeDef);
-    var sb = '';
+    var sb = "";
     sb += printLine(`${this.name} copyWith({`, 2, 1);
     // Constructor objects.
     for (const value of values) {
       sb += printLine(`${this.addType(value, input)} ${value.name},`, 1, 2);
     }
-    sb += printLine('}) {', 1, 1);
+    sb += printLine("}) {", 1, 1);
     sb += printLine(`return ${this.name}(`, 1, 2);
     // Return constructor.
     for (const value of values) {
-      sb += printLine(`${value.name}: ${value.name} ?? this.${value.name},`, 1, 3);
+      sb += printLine(
+        `${value.name}: ${value.name} ?? this.${value.name},`,
+        1,
+        3
+      );
     }
-    sb += printLine(');', 1, 2);
-    sb += printLine('}', 1, 1);
+    sb += printLine(");", 1, 2);
+    sb += printLine("}", 1, 1);
     return sb;
   }
 
@@ -1058,17 +1290,19 @@ export class ClassDefinition {
    * @param toString method should be generated or not.
    */
   private toStringMethod(print: boolean = false): string {
-    if (!print) { return ''; }
+    if (!print) {
+      return "";
+    }
     const values = this.fields.map((f) => f.typeDef);
     const expressionBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
-      sb += printLine('String toString() => ', 1, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
+      sb += printLine("String toString() => ", 1, 1);
       sb += `'${this.name}(`;
       for (let i = 0; i < values.length; i++) {
         const isEnd = values.length - 1 === i;
         const name = values[i].name;
-        const separator = isEnd ? ')\';' : ', ';
+        const separator = isEnd ? ")';" : ", ";
         sb += `${name}: $${name}`;
         sb += separator;
       }
@@ -1076,18 +1310,18 @@ export class ClassDefinition {
     };
 
     const blockBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
-      sb += printLine('String toString() {', 1, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
+      sb += printLine("String toString() {", 1, 1);
       sb += printLine(`return '${this.name}(`, 1, 2);
       for (let i = 0; i < values.length; i++) {
         const isEnd = values.length - 1 === i;
         const name = values[i].name;
-        const separator = isEnd ? ')\';' : ', ';
+        const separator = isEnd ? ")';" : ", ";
         sb += `${name}: $${name}`;
         sb += separator;
       }
-      sb += printLine('}', 1, 1);
+      sb += printLine("}", 1, 1);
       return sb;
     };
     var isShort = expressionBody().length < 90;
@@ -1099,14 +1333,16 @@ export class ClassDefinition {
    * @param {Input} input user input.
    */
   private equalityOperator(input: Input): string {
-    if (input.equality !== 'Dart') { return ''; }
+    if (input.equality !== "Dart") {
+      return "";
+    }
 
-    const type = input.nullSafety ? 'Object' : 'dynamic';
+    const type = input.nullSafety ? "Object" : "dynamic";
     // const castType = input.nullSafety ? '' : ' as List';
     // const fields = this.fields.map((f) => f.typeDef).sort((a, b) => {
     //   return a.isList === b.isList ? 0 : a ? -1 : 1;
     // });
-    let sb = '';
+    let sb = "";
     // sb += printLine('@override', 2, 1);
     // sb += printLine(`bool operator ==(${type} other) {`, 1, 1);
     // sb += printLine('if (identical(other, this)) return true;', 1, 2);
@@ -1139,40 +1375,52 @@ export class ClassDefinition {
     // }
 
     // New test template...
-    const typeCast = input.nullSafety ? '' : ' as Map';
-    sb += printLine('@override', 2, 1);
+    const typeCast = input.nullSafety ? "" : " as Map";
+    sb += printLine("@override", 2, 1);
     sb += printLine(`bool operator ==(${type} other) {`, 1, 1);
-    sb += printLine('if (identical(other, this)) return true;', 1, 2);
+    sb += printLine("if (identical(other, this)) return true;", 1, 2);
     sb += printLine(`if (other is! ${this.name}) return false;`, 1, 2);
-    sb += printLine('final mapEquals = const DeepCollectionEquality().equals;', 1, 2);
-    sb += printLine(`return mapEquals(other.to${suffix(input)}()${typeCast}, to${suffix(input)}());`, 1, 2);
+    sb += printLine(
+      "final mapEquals = const DeepCollectionEquality().equals;",
+      1,
+      2
+    );
+    sb += printLine(
+      `return mapEquals(other.to${suffix(input)}()${typeCast}, to${suffix(
+        input
+      )}());`,
+      1,
+      2
+    );
     // ent test template...
-    sb += printLine('}', 1, 1);
+    sb += printLine("}", 1, 1);
     return sb;
   }
 
   private hashCode(input: Input): string {
-    if (input.equality !== 'Dart') { return ''; }
+    if (input.equality !== "Dart") {
+      return "";
+    }
     const fields = this.fields.map((f) => f.typeDef);
     const expressionBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
-      sb += printLine('int get hashCode => ', 1, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
+      sb += printLine("int get hashCode => ", 1, 1);
       fields.forEach((f, i, arr) => {
         const isEnd = arr.length - 1 === i;
-        const separator = isEnd ? ';' : ' ^ ';
+        const separator = isEnd ? ";" : " ^ ";
         sb += `${f.name}.hashCode`;
         sb += separator;
       });
       return sb;
     };
     const blockBody = (): string => {
-      let sb = '';
-      sb += printLine('@override', 2, 1);
-      sb += printLine('int get hashCode =>', 1, 1);
+      let sb = "";
+      sb += printLine("@override", 2, 1);
+      sb += printLine("int get hashCode =>", 1, 1);
       fields.forEach((f, i, arr) => {
         const isEnd = arr.length - 1 === i;
-        const separator = isEnd ? ';' : ' ^';
+        const separator = isEnd ? ";" : " ^";
         sb += printLine(`${f.name}.hashCode` + separator, 1, 3);
       });
       return sb;
@@ -1182,7 +1430,7 @@ export class ClassDefinition {
   }
 
   toCodeGenString(input: Input): string {
-    var field = '';
+    var field = "";
 
     if (this.fields.length === 0) {
       field = emptyClass(this.name);
@@ -1200,55 +1448,59 @@ export class ClassDefinition {
         field += this.importsFromPackage(input);
         field += this.importList();
         field += this.importsForParts(input);
-        field += '@JsonSerializable()\n';
-        field += `class ${this.name}${input.equatable ? ' extends Equatable' : ''}; {\n`;
+        field += "@JsonSerializable()\n";
+        field += `class ${this.name}${
+          input.equatable ? " extends Equatable" : ""
+        }; {\n`;
         if (input.sortConstructorsFirst) {
-          field += this.defaultPrivateConstructor(input) + '\n\n';
+          field += this.defaultPrivateConstructor(input) + "\n\n";
           field += this.fieldListCodeGen(input);
         } else {
-          field += this.fieldListCodeGen(input) + '\n';
+          field += this.fieldListCodeGen(input) + "\n";
           field += this.defaultPrivateConstructor(input);
         }
         field += this.toStringMethod(input.isAutoOrToStringMethod);
-        field += this.gettersSetters(input) + '\n\n';
-        field += this.codeGenJsonParseFunc(input) + '\n\n';
+        field += this.gettersSetters(input) + "\n\n";
+        field += this.codeGenJsonParseFunc(input) + "\n\n";
         field += this.codeGenToJsonFunc();
         field += this.copyWithMethod(input);
         field += this.equalityOperator(input);
         field += this.hashCode(input);
         field += this.stringify(input.isAutoOrStringify);
         field += this.equatablePropList(input);
-        field += '\n}\n'; // close class
+        field += "\n}\n"; // close class
         return field;
       } else {
         field += this.importsFromPackage(input);
         field += this.importList();
         field += this.importsForParts(input);
-        field += '@JsonSerializable()\n';
-        field += `class ${this.name}${input.equatable ? ' extends Equatable' : ''} {\n`;
+        field += "@JsonSerializable()\n";
+        field += `class ${this.name}${
+          input.equatable ? " extends Equatable" : ""
+        } {\n`;
         if (input.sortConstructorsFirst) {
-          field += this.defaultConstructor(input) + '\n\n';
+          field += this.defaultConstructor(input) + "\n\n";
           field += this.fieldListCodeGen(input);
         } else {
-          field += this.fieldListCodeGen(input) + '\n';
+          field += this.fieldListCodeGen(input) + "\n";
           field += this.defaultConstructor(input);
         }
         field += this.toStringMethod(input.isAutoOrToStringMethod);
-        field += this.codeGenJsonParseFunc(input) + '\n\n';
+        field += this.codeGenJsonParseFunc(input) + "\n\n";
         field += this.codeGenToJsonFunc();
         field += this.copyWithMethod(input);
         field += this.equalityOperator(input);
         field += this.hashCode(input);
         field += this.stringify(input.isAutoOrStringify);
         field += this.equatablePropList(input);
-        field += '\n}\n'; // close class
+        field += "\n}\n"; // close class
         return field;
       }
     }
   }
 
   toString(input: Input): string {
-    var field = '';
+    var field = "";
 
     if (this.fields.length === 0) {
       field = emptyClass(this.name);
@@ -1260,38 +1512,42 @@ export class ClassDefinition {
       field += this.importsFromPackage(input);
       field += this.importList();
       field += this.importsForParts(input);
-      field += `${input.immutable ? '@immutable\n' : ''}`;
-      field += `class ${this.name}${input.equatable ? ' extends Equatable' : ''} {\n`;
+      field += `${input.immutable ? "@immutable\n" : ""}`;
+      field += `class ${this.name}${
+        input.equatable ? " extends Equatable" : ""
+      } {\n`;
       if (input.sortConstructorsFirst) {
-        field += this.defaultPrivateConstructor(input) + '\n\n';
+        field += this.defaultPrivateConstructor(input) + "\n\n";
         field += this.fieldList(input);
       } else {
-        field += this.fieldList(input) + '\n\n';
+        field += this.fieldList(input) + "\n\n";
         field += this.defaultPrivateConstructor(input);
       }
       field += this.toStringMethod(input.isAutoOrToStringMethod);
-      field += this.gettersSetters(input) + '\n\n';
-      field += this.jsonParseFunc(input) + '\n\n';
+      field += this.gettersSetters(input) + "\n\n";
+      field += this.jsonParseFunc(input) + "\n\n";
       field += this.toJsonFunc(input);
       field += this.copyWithMethod(input);
       field += this.equalityOperator(input);
       field += this.hashCode(input);
       field += this.stringify(input.isAutoOrStringify);
       field += this.equatablePropList(input);
-      field += '\n}\n'; // close class
+      field += "\n}\n"; // close class
       return field;
     } else {
       field += this.dartImports(input);
       field += this.importsFromPackage(input);
       field += this.importList();
       field += this.importsForParts(input);
-      field += `${input.immutable ? '@immutable\n' : ''}`;
-      field += `class ${this.name}${input.equatable ? ' extends Equatable' : ''} {\n`;
+      field += `${input.immutable ? "@immutable\n" : ""}`;
+      field += `class ${this.name}${
+        input.equatable ? " extends Equatable" : ""
+      } {\n`;
       if (input.sortConstructorsFirst) {
-        field += this.defaultConstructor(input) + '\n\n';
+        field += this.defaultConstructor(input) + "\n\n";
         field += this.fieldList(input);
       } else {
-        field += this.fieldList(input) + '\n\n';
+        field += this.fieldList(input) + "\n\n";
         field += this.defaultConstructor(input);
       }
       field += this.toStringMethod(input.isAutoOrToStringMethod);
@@ -1304,7 +1560,7 @@ export class ClassDefinition {
       field += this.hashCode(input);
       field += this.stringify(input.isAutoOrStringify);
       field += this.equatablePropList(input);
-      field += '\n}\n'; // close class
+      field += "\n}\n"; // close class
       return field;
     }
   }
