@@ -1,219 +1,262 @@
 # Changelog
 
-## 3.5.8
+> **Note:** This is an enhanced fork of the original [Json-to-Dart-Model](https://github.com/hiranthaR/Json-to-Dart-Model) by hiranthaR.
+> All versions below 1.0.0 refer to the original project's changelog.
 
-   - Now can detect fractional seconds.
+## 1.0.0 - Enhanced Fork Release 🚀
 
-## 3.5.7
+### 🆕 New Features
 
-   - Fixed lint error for non-nullable typecast to the nullable type for JSON parser.
-   - Added better equality operator with `DeepCollectionEquality` from the Dart collection.
+- **Enhanced Freezed Support**: Fixed and improved Freezed class generation
+- **Proper Abstract Classes**: Freezed classes now correctly generate with `abstract` keyword by default
+- **Updated Publisher**: Published under `kingace2056` namespace with improved branding
+- **Better Error Handling**: Enhanced error messages and validation
 
-## 3.5.6
+### ✨ Improvements
 
-   - Updated failing build scripts.
+- **Code Quality**: Refactored TypeScript codebase for better maintainability
+- **Performance**: Optimized JSON parsing and code generation algorithms
+- **Documentation**: Comprehensive README updates with better examples
+- **Dependencies**: Updated all dependencies to latest stable versions
 
-## 3.5.5
+### 🔧 Technical Changes
 
-   - Bugfix and syntaxt corecction.
+- Fixed Freezed syntax formatting issues
+- Improved abstract class generation logic
+- Better TypeScript type definitions
+- Enhanced VS Code API compatibility
+- Streamlined build process
 
-## 3.5.4
+### 🙏 Acknowledgments
 
-   - Added possibility to implement JSON converter, `encode/decode` inside the `toJson/fromJson` methods. Also will be added extra methods toMap/fromMap.
+- This version builds upon the excellent foundation created by [hiranthaR](https://github.com/hiranthaR)
+- All credit for the original concept and implementation goes to the original author
+- This fork focuses on enhancements and bug fixes while maintaining compatibility
 
-## 3.5.3
+---
 
-   - Bugfix for windows.
+## Original Project Changelog (Pre-Fork)
 
-## 3.5.2
+### 3.5.8
 
-   - Bugfix.
+- Now can detect fractional seconds.
 
-## 3.5.1
+### 3.5.7
 
-   - Bugfix.
+- Fixed lint error for non-nullable typecast to the nullable type for JSON parser.
+- Added better equality operator with `DeepCollectionEquality` from the Dart collection.
 
-## 3.5.0
+### 3.5.6
 
-   - Added support for safe `JSON`. The generator can read and parse `json` and `jsonc` from any method.
-   - Added support for multiple files conversion. The generator can read `**.json` and `**.jsonc` files from the tracked file or directory.
-   - Added a better method for writing files from the context or file explorer.
-   - Added option to override from/to suffix.
-   - Added option to avoid `dynamic` types. Generator will generate `dynamic` types as `Object` with null safety check.
-   - Improved conversion performance. 5X faster speed.
-   - Bugfix.
+- Updated failing build scripts.
 
-## 3.4.1
+### 3.5.5
 
-   - Bugfix.
+- Bugfix and syntax correction.
 
-## 3.4.0
+### 3.5.4
 
-   - Hotfix. Does not generate a new model after deleted.
-   - Added method to generate models from the `models.jsonc` file after detected newly added JSON objects.
+- Added possibility to implement JSON converter, `encode/decode` inside the `toJson/fromJson` methods. Also will be added extra methods toMap/fromMap.
+
+### 3.5.3
+
+- Bugfix for windows.
+
+### 3.5.2
+
+- Bugfix.
+
+### 3.5.1
+
+- Bugfix.
+
+### 3.5.0
+
+- Added support for safe `JSON`. The generator can read and parse `json` and `jsonc` from any method.
+- Added support for multiple files conversion. The generator can read `**.json` and `**.jsonc` files from the tracked file or directory.
+- Added a better method for writing files from the context or file explorer.
+- Added option to override from/to suffix.
+- Added option to avoid `dynamic` types. Generator will generate `dynamic` types as `Object` with null safety check.
+- Improved conversion performance. 5X faster speed.
+- Bugfix.
+
+### 3.4.1
+
+- Bugfix.
+
+### 3.4.0
+
+- Hotfix. Does not generate a new model after deleted.
+- Added method to generate models from the `models.jsonc` file after detected newly added JSON objects.
 
 ## 3.3.9
 
-   - Implemented faster equality operator.
+- Implemented faster equality operator.
 
 ## 3.3.8
 
-   - Added new option include if null for the `fromJson` method.
+- Added new option include if null for the `fromJson` method.
 
 ## 3.3.7
 
-   - Improved double values conversion.
-   - Added possibility to override the default path with a new one by adding `__path` key by working with models.jsonc file. Example: `"__path": "/lib/models/user"`.
- 
+- Improved double values conversion.
+- Added possibility to override the default path with a new one by adding `__path` key by working with models.jsonc file. Example: `"__path": "/lib/models/user"`.
+
 ## 3.3.6
 
-   - Bugfix.
+- Bugfix.
 
 ## 3.3.5
 
-   - Added support to force new type for key.
+- Added support to force new type for key.
 
-     Example:
-     ```json
-     {
-        "userPost.post": {
-         "id": 1,
-         "description": "Json To Dart Model",
-         "completed": false
-	     }
-     }
-     ```
-     Result:
-     ```dart
-     Post? userPost; // <- result
-     UserPost? userPost; // <- without forcing
-     ```
-   - Bugfix.
+  Example:
+
+  ```json
+  {
+    "userPost.post": {
+      "id": 1,
+      "description": "Json To Dart Model",
+      "completed": false
+    }
+  }
+  ```
+
+  Result:
+
+  ```dart
+  Post? userPost; // <- result
+  UserPost? userPost; // <- without forcing
+  ```
+
+- Bugfix.
 
 ## 3.3.4
 
-   - Fixed JSON annotation key bug.
+- Fixed JSON annotation key bug.
 
 ## 3.3.3
 
-   - Fixed JSON annotation key for Freezed and JSON serializable, ex: `@JsonKey(name: user_id)`. JSON key annotation will be added only when needed. This provides a cleaner code syntax.
-   - Fixed a correction of plural class names.
+- Fixed JSON annotation key for Freezed and JSON serializable, ex: `@JsonKey(name: user_id)`. JSON key annotation will be added only when needed. This provides a cleaner code syntax.
+- Fixed a correction of plural class names.
 
 ## 3.3.2
 
-   - Added option to sort constructor declarations before other members.
-   - Fixed lint errors for empty classes.
-   - Documentation update.
+- Added option to sort constructor declarations before other members.
+- Fixed lint errors for empty classes.
+- Documentation update.
 
 ## 3.3.1
 
-   - Fixed an issue with `Freezed` where optional dynamic keys were not allowed.
-   - Fixed a bug with Dart Format.
+- Fixed an issue with `Freezed` where optional dynamic keys were not allowed.
+- Fixed a bug with Dart Format.
 
 ## 3.3.0
 
-   - Improved implementation of code generation libraries to `pubspec.yaml` included and Freezed. All missing dependencies will be installed with one click.
-   - Added file name enhancement. Separate your class name with a dot and after the dot everything will be added as enhancement name.
+- Improved implementation of code generation libraries to `pubspec.yaml` included and Freezed. All missing dependencies will be installed with one click.
+- Added file name enhancement. Separate your class name with a dot and after the dot everything will be added as enhancement name.
 
 ## 3.2.8
 
-   - Correction of certain descriptions.
-   - Added terminal focus when running the generator.
+- Correction of certain descriptions.
+- Added terminal focus when running the generator.
 
-## 3.2.7 
+## 3.2.7
 
-   - Added actions from the right mouse button context menu.
-   - Improved setting quality.
+- Added actions from the right mouse button context menu.
+- Improved setting quality.
 
 ## 3.2.5
 
-   - Added option to disable run build runner.
-   - Added button don't ask again for confirmation, when generating from the `models.json` file.
-   - Bug fix.
+- Added option to disable run build runner.
+- Added button don't ask again for confirmation, when generating from the `models.json` file.
+- Bug fix.
 
 ## 3.2.3
 
-   - Removed Dart UI import for hashCode.
-   - To improve better stability and flexibility configuration from the file `models.jsonc` was moved to the `Settings/Extensions/JSON To Dart Model`
-   - Equality operator now sort lists first.
-   - Null-Safety enabled as default. To disable it go to the `Settings/Extensions/JSON To Dart Model/Null Safety`
+- Removed Dart UI import for hashCode.
+- To improve better stability and flexibility configuration from the file `models.jsonc` was moved to the `Settings/Extensions/JSON To Dart Model`
+- Equality operator now sort lists first.
+- Null-Safety enabled as default. To disable it go to the `Settings/Extensions/JSON To Dart Model/Null Safety`
 
 ## 3.2.0
 
-   - Expression body for `fromJson` and `toJson`. In most cases it has a nicer format.
-   - More `DateTime` format support.
-   
-     ```
-     // Supported date formats. 
-     2008-09-15T15:53:00
-     2007-03-01T13:00:00Z
-     2015-10-05T21:46:54-1500
-     2015-10-05T21:46:54+07:00
-     2020-02-06T14:00:00+00:00
-     ```
-   - Bugfix for merging class definitions.
-   - More accurate marking of null safety indication.
-   - Bugfix for annotation  marking.
+- Expression body for `fromJson` and `toJson`. In most cases it has a nicer format.
+- More `DateTime` format support.
+
+  ```
+  // Supported date formats.
+  2008-09-15T15:53:00
+  2007-03-01T13:00:00Z
+  2015-10-05T21:46:54-1500
+  2015-10-05T21:46:54+07:00
+  2020-02-06T14:00:00+00:00
+  ```
+
+- Bugfix for merging class definitions.
+- More accurate marking of null safety indication.
+- Bugfix for annotation marking.
 
 ## 3.1.5
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/34) from [Arnas](https://github.com/iamarnas)
-   - Improved equality operator.
-   - Added annotations support.
+  - Improved equality operator.
+  - Added annotations support.
 
 It is possible to mark `JSON` values as default or required by adding to your `JSON` key `d@` or `r@`
 
 ## 3.1.3
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/31) from [Arnas](https://github.com/iamarnas)
-   - Improved some syntax correction.
+  - Improved some syntax correction.
 
 ## 3.1.1
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/29) from [Arnas](https://github.com/iamarnas)
-   - Added primary configuration option to the `models.jsonc` file.
-   - Those who update to 3.1.0 from older version. Be sure to add `"primaryConfiguration": false` to `models.jsonc` configuration or go to help for more information if you were warned.
+  - Added primary configuration option to the `models.jsonc` file.
+  - Those who update to 3.1.0 from older version. Be sure to add `"primaryConfiguration": false` to `models.jsonc` configuration or go to help for more information if you were warned.
 
 ## 3.1.0
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/28) from [Arnas](https://github.com/iamarnas)
-   - Added support for Dart null safety. 
 
-   > For any suggestions on how to improve the better null safety syntax your are welcome  to open [discuss](https://github.com/hiranthaR/Json-to-Dart-Model/discussions).
+  - Added support for Dart null safety.
 
-   - Those who update to 3.1.0 from older version. Be sure to add `"nullSafety": false,` to `models.jsonc` configuration or go to help for more information if you were warned.
+  > For any suggestions on how to improve the better null safety syntax your are welcome to open [discuss](https://github.com/hiranthaR/Json-to-Dart-Model/discussions).
+
+  - Those who update to 3.1.0 from older version. Be sure to add `"nullSafety": false,` to `models.jsonc` configuration or go to help for more information if you were warned.
 
 ## 3.0.3
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/27) from [Arnas](https://github.com/iamarnas)
-   - Added better support for building models from `models.jsonc` file.
-   - Those who update to 3.0.2 from older version. Be sure to add `"fastMode": false` to `models.jsonc` configuration or go to help for more information if you were warned.
+  - Added better support for building models from `models.jsonc` file.
+  - Those who update to 3.0.2 from older version. Be sure to add `"fastMode": false` to `models.jsonc` configuration or go to help for more information if you were warned.
 
 ## 3.0.0
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/24) from [Arnas](https://github.com/iamarnas)
-   - Added support to build from file.
+  - Added support to build from file.
 
 ## 2.7.5
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/23) from [Arnas](https://github.com/iamarnas)
-   - Added support for duplicate structures. 
+  - Added support for duplicate structures.
 
 ## 2.6.4
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/22) from [Arnas](https://github.com/iamarnas)
-   - Added return as a received keyword 
+  - Added return as a received keyword
 
 ## 2.6.3
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/18) from [Arnas](https://github.com/iamarnas)
-   - Added responsive formatting and date support.
+  - Added responsive formatting and date support.
 
 ## 2.6.2
 
 - see [pull request](https://github.com/hiranthaR/Json-to-Dart-Model/pull/17) from [Arnas](https://github.com/iamarnas)
-   - Added better support for deeply nested json objects.
-   - Added support for list of lists. (Hot fix)
+  - Added better support for deeply nested json objects.
+  - Added support for list of lists. (Hot fix)
 
 ## 2.6.1
 
@@ -234,7 +277,7 @@ It is possible to mark `JSON` values as default or required by adding to your `J
 
 ## 2.4.2 - 2020-12-29
 
-- Fixed List<Null>  to List<dynamic>
+- Fixed List<Null> to List<dynamic>
 - improved with [Effective Dart: Style](https://dart.dev/guides/language/effective-dart/style)
 - removed unwanted `new` keywords
 
@@ -258,7 +301,7 @@ It is possible to mark `JSON` values as default or required by adding to your `J
 
 - fixed filename, snake cased file create error when underscore.
 - `@JsonKey` annotation to code generation library generated codes.
-Read more about [Creating model classes the json_serializable way](https://flutter.dev/docs/development/data-and-backend/json#creating-model-classes-the-json_serializable-way)
+  Read more about [Creating model classes the json_serializable way](https://flutter.dev/docs/development/data-and-backend/json#creating-model-classes-the-json_serializable-way)
 
 ## 2.1.0
 

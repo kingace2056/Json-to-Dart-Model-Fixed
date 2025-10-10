@@ -1,9 +1,9 @@
 {
-  "name": "json-to-dart",
-  "displayName": "Json to Dart Model",
-  "description": "Extension convert Json to Dart Model class",
-  "version": "3.5.8",
-  "publisher": "hirantha",
+  "name": "json-to-dart-fixed-kingace2056",
+  "displayName": "Json to Dart Model (Freeze issue Fix)",
+  "description": "Extension convert Json to Dart Model class, With support for Null-Safety, Freezed and Json Serializable.",
+  "version": "1.0.0",
+  "publisher": "kingace2056",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.59.0"
@@ -38,9 +38,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/hiranthar/Json-to-Dart-Model.git"
+    "url": "https://github.com/kingace2056/Json-to-Dart-Model-Fixed.git"
   },
-  "author": "https://github.com/hiranthar",
+  "author": "https://github.com/kingace2056",
   "main": "./out/index.js",
   "contributes": {
     "commands": [
@@ -266,7 +266,7 @@
     "eslint": "^8.3.0",
     "glob": "^7.2.0",
     "mocha": "^9.1.3",
-    "typescript": "^4.5.2",
+    "typescript": "^4.9.5",
     "vscode-test": "^1.6.1"
   },
   "dependencies": {

@@ -820,8 +820,7 @@ export class ClassDefinition {
         ? printLine(`${this.name}._();`, 2, 1)
         : "";
     sb += printLine("@freezed");
-    sb += printLine(`abstract class ${this.name}`, 1);
-    sb += printLine(`with _$${this.name} {`);
+    sb += printLine(`abstract class ${this.name} with _$${this.name} {`, 1);
     sb += printLine(`factory ${this.name}({`, 1, 1);
     for (const typeDef of this.fields.map((v) => v.typeDef)) {
       const optional = "optional" + pascalCase(typeDef.name);

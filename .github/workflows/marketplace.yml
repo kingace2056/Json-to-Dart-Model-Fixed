@@ -28,9 +28,9 @@ jobs:
       - name: release package to github repo
         uses: marvinpinto/action-automatic-releases@latest
         with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ env.TAG_VERSION }}
           prerelease: false
-          title: 'Json to Dart Extension ${{ env.TAG_VERSION }}'
+          title: "Json to Dart Extension ${{ env.TAG_VERSION }}"
           files: |
-            ./json-to-dart-${{ env.BUILD_VERSION }}.vsix
+            ./json-to-dart-2025-${{ env.BUILD_VERSION }}.vsix
