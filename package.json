@@ -1,6 +1,6 @@
 {
   "name": "json-to-dart-fixed-kingace2056",
-  "displayName": "Dart Model Forge (Community Fork)",
+  "displayName": "Json to Dart Wizard (Community Fork)",
   "description": "Community-maintained fork of Json to Dart Model with focused fixes for Freezed output, ongoing compatibility updates, and improved generation reliability.",
   "version": "1.0.1",
   "publisher": "kingace2056",
