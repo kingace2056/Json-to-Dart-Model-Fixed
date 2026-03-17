@@ -1,8 +1,8 @@
 {
   "name": "json-to-dart-fixed-kingace2056",
-  "displayName": "Json to Dart Model (Freeze issue Fix)",
-  "description": "Extension convert Json to Dart Model class, With support for Null-Safety, Freezed and Json Serializable.",
-  "version": "1.0.0",
+  "displayName": "Dart Model Forge (Community Fork)",
+  "description": "Community-maintained fork of Json to Dart Model with focused fixes for Freezed output, ongoing compatibility updates, and improved generation reliability.",
+  "version": "1.0.1",
   "publisher": "kingace2056",
   "icon": "icon.png",
   "engines": {

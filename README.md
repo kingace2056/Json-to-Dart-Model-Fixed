@@ -1,56 +1,45 @@
-# JSON to Dart Model - Enhanced Fork
+# Dart Model Forge (Community Fork)
 
-> From JSON to Dart Advanced - Enhanced Fork
+A community-maintained fork of Json-to-Dart-Model, published by kingace2056.
 
-## 🚀 What's New in This Fork
+## Fork Disclosure
 
-This enhanced version builds upon the original project with several key improvements:
+This extension is an independent fork of the original project:
 
-### ✨ Enhanced Freezed Support
-- **Improved Freezed Syntax**: Fixed formatting to follow proper Freezed conventions
-- **Better Abstract Class Generation**: Freezed classes now properly generate with `abstract` keyword by default
-- **Optimized Code Structure**: Cleaner, more maintainable code generation for Freezed models
+- Original: https://github.com/hiranthaR/Json-to-Dart-Model
+- Fork: https://github.com/kingace2056/Json-to-Dart-Model-Fixed
+- Publisher: kingace2056
 
-### 🔧 Technical Improvements  
-- **Updated Dependencies**: Latest TypeScript and VS Code API compatibility
-- **Bug Fixes**: Resolved various edge cases and formatting issues
-- **Performance Optimizations**: Faster JSON parsing and code generation
-- **Better Error Handling**: More robust error messages and validation
+This fork exists to provide ongoing maintenance, compatibility fixes, and practical improvements for production use.
 
-### 📱 Developer Experience
-- **Enhanced IntelliSense**: Better code completion and suggestions
-- **Improved Formatting**: More consistent and readable generated code
-- **Better Documentation**: Comprehensive examples and usage guides
+## Distinguishing Features
 
-## Installation
+- Maintenance-oriented releases focused on stability and issue resolution.
+- Improved Freezed generation behavior and formatting consistency.
+- Better compatibility with recent TypeScript and VS Code environments.
+- Reliability improvements in clipboard and selection conversion flows.
 
-1. Open VS Code
-2. Go to Extensions (Ctrl+Shift+X)
-3. Search for "Json to Dart Model" by `kingace2056`
-4. Click Install
+## Core Capabilities
 
-## Features
+- Convert JSON from clipboard to Dart model classes.
+- Convert JSON from editor selection to Dart model classes.
+- Generate output for Freezed and Json Serializable workflows.
+- Generate null-safety aware models.
+- Use command palette and context-menu actions.
 
-- Convert JSON from clipboard to Dart model classes
-- Convert JSON from selection to Dart model classes  
-- Support for Freezed and JSON Serializable code generation
-- Null safety support
-- Effective Dart style compliance
-- Enhanced file naming options
-- Context menu support
+## Install
 
-## How to Use
+1. Open VS Code Extensions.
+2. Search for Dart Model Forge (Community Fork) by kingace2056.
+3. Click Install.
 
-1. Copy a valid JSON
-2. Press `Ctrl + Shift + P`
-3. Search for "Convert From Clipboard"
-4. Provide class name and location
-5. Choose your generation options
+## Quick Start
+
+1. Copy valid JSON.
+2. Open Command Palette.
+3. Run a JSON to Dart command.
+4. Choose class name and output options.
 
 ## License
 
-Distributed under the MIT License.
-
-## Acknowledgments
-
-This project is inspired by and built upon the excellent work of [hiranthaR's Json-to-Dart-Model](https://github.com/hiranthaR/Json-to-Dart-Model).
+MIT
