@@ -2,22 +2,24 @@
 
 Json to Dart Wizard is a community-maintained fork of Json-to-Dart-Model, published by kingace2056.
 
-## Fork Disclosure
+## Important Fork Notice
 
-This extension is an independent fork of the original project:
+This extension is not the original listing. It is a fork maintained by kingace2056.
 
-- Original: https://github.com/hiranthaR/Json-to-Dart-Model
-- Fork: https://github.com/kingace2056/Json-to-Dart-Model-Fixed
-- Publisher: kingace2056
+- Original project: https://github.com/hiranthaR/Json-to-Dart-Model
+- This fork: https://github.com/kingace2056/Json-to-Dart-Model-Fixed
+- Marketplace publisher: kingace2056
 
-This fork exists to provide ongoing maintenance, compatibility fixes, and practical improvements for production use.
+## Why This Fork Exists
 
-## Distinguishing Features
+The fork focuses on maintenance and practical fixes for teams using JSON-to-Dart generation in active projects.
 
-- Maintenance-oriented releases focused on stability and issue resolution.
-- Improved Freezed generation behavior and formatting consistency.
-- Better compatibility with recent TypeScript and VS Code environments.
-- Reliability improvements in clipboard and selection conversion flows.
+## What Is Different
+
+- Updated maintenance path and release ownership.
+- Freezed output improvements and formatting fixes.
+- Compatibility updates for modern VS Code/TypeScript setups.
+- Reliability improvements for conversion commands and flows.
 
 ## Core Capabilities
 
