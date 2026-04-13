@@ -1,6 +1,6 @@
-# Dart Model Forge (Community Fork)
+# Json to Dart Wizard (Community Fork)
 
-A community-maintained fork of Json-to-Dart-Model, published by kingace2056.
+Json to Dart Wizard is a community-maintained fork of Json-to-Dart-Model, published by kingace2056.
 
 ## Fork Disclosure
 
@@ -30,7 +30,7 @@ This fork exists to provide ongoing maintenance, compatibility fixes, and practi
 ## Install
 
 1. Open VS Code Extensions.
-2. Search for Dart Model Forge (Community Fork) by kingace2056.
+2. Search for Json to Dart Wizard (Community Fork) by kingace2056.
 3. Click Install.
 
 ## Quick Start

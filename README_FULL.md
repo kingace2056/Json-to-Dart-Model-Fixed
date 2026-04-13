@@ -1,6 +1,6 @@
-# Dart Model Forge (Community Fork)
+# Json to Dart Wizard (Community Fork)
 
-Dart Model Forge is a community-maintained fork of Json-to-Dart-Model.
+Json to Dart Wizard is a community-maintained fork of Json-to-Dart-Model.
 
 ## Important Fork Notice
 
